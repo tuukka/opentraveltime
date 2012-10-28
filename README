@@ -1,0 +1,112 @@
+
+OpenTravelTime is an Open Source journey planner web application
+created using the Django web programming framework.
+
+You can participate in its development, use it as a starting point for
+your own Reittiopas or Matka.fi API related projects, or just have a
+look at the source code as an example of how to use the APIs.
+
+The source code is licensed under the AGPLv3 license, which allows you
+to use and modify it freely as long as you publish in the same terms
+the source code to any resulting service. For details, see the file
+COPYING.
+
+
+== Features ==
+
+* Route queries with Reittiopas and Matka.fi APIs
+
+* Multi-destination route queries with comparison to walking and biking
+
+  * Some destination sets from Service map API
+
+* Automatically locate starting point based on HTML5 geolocation
+
+
+== Learn how to ==
+
+* Call the Reittiopas and Matka.fi API and interpret the results
+
+* Display the result codes in a human-friendly way
+
+* Display the routes on a free map from OpenStreetMap
+
+
+== Getting started ==
+
+* You need access to a server where you can run Django web applications.
+  (e.g. Kapsi.fi or a virtual server or Heroku.com)
+
+  * You can join Kapsi ry which enables this for their members.
+
+  * For private use, this can be your own computer or virtual machine too.
+
+* Create Reittiopas and/or Matka.fi API account
+  * http://developer.reittiopas.fi/pages/en/account-request.php
+  * http://developer.matka.fi/pages/en/account-request.php
+
+* Log in to your server using an SSH client
+
+* Fetch OpenTravelTime source code with the following command:
+
+$ git clone https://github.com/tuukka/opentraveltime.git
+
+
+== Django installation example using virtualenvwrapper ==
+
+$ mkdir ~/.virtualenvs
+$ mkvirtualenv ott
+$ workon ott
+$ pip install django
+
+$ cd opentraveltime
+
+$ cp opentraveltime/settings.py.template opentraveltime/settings.py
+$ nano -w opentraveltime/settings.py
+
+  * Edit the following settings:
+    * REITTIOPAS_USER, REITTIOPAS_PASS
+    * MATKAFI_USER, MATKAFI_PASS
+
+$ ./manage.py runserver
+
+* Access the installation at http://127.0.0.1:8000/
+
+
+== Django deployment example using virtualenvwrapper and FCGI at Kapsi ==
+
+$ workon ott
+$ cd opentraveltime
+
+$ nano -w opentraveltime/settings.py
+
+  * Edit the following settings:
+    * REITTIOPAS_USER, REITTIOPAS_PASS
+    * MATKAFI_USER, MATKAFI_PASS
+    * DEBUG should be set to False when deploying
+    * ADMINS
+    * STATIC_ROOT should be the directory where you can store static files
+      e.g. "/home/users/tuukka/sites/tuukka.kapsi.fi/www/ott/static/"
+    * STATIC_URL should be the http path to the directory above
+      e.g. "/ott/static/"
+
+$ cp opentraveltime.fcgi.template opentraveltime.fcgi 
+$ nano -w opentraveltime.fcgi
+
+  * Edit the following settings
+    * The first line should point to the python inside your virtualenv
+      e.g. #!/home/users/tuukka/.virtualenvs/ott/bin/python
+    * PROJECT_DIR if the opentraveltime directory is not directely in home dir
+      e.g. "/home/users/tuukka/opentraveltime"
+
+$ mkdir /home/users/tuukka/sites/tuukka.kapsi.fi/www/ott/
+$ mv opentraveltime.fcgi /home/users/tuukka/sites/tuukka.kapsi.fi/www/ott/
+
+$ cp htaccess.example /home/users/tuukka/sites/tuukka.kapsi.fi/www/ott/.htaccess
+
+$ ./manage.py collectstatic
+
+$ mkdir cache
+
+* Access your deployment
+  e.g. at http://tuukka.kapsi.fi/ott/

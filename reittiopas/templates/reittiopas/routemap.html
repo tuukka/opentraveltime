@@ -1,0 +1,54 @@
+<div id="{{ mapid }}" class="smallmap">
+</div>
+
+<script type="text/javascript">
+
+var {{ mapid }};
+
+(function() {
+    var Point = OpenLayers.Geometry.Point;
+    var LineString = OpenLayers.Geometry.LineString;
+
+    var geometry = {{ geometry }};
+
+    var map = new OpenLayers.Map('{{mapid}}', {
+        maxResolution:'auto', 
+// for bing?    restrictedExtent : OpenLayers.Bounds(-10, -10, 10, 10),
+        controls: [
+            new OpenLayers.Control.Navigation(),
+            new OpenLayers.Control.PanZoomBar(),
+//            new OpenLayers.Control.NavToolbar(),
+//            new OpenLayers.Control.ArgParser(),
+//            new OpenLayers.Control.Permalink(),
+//            new OpenLayers.Control.Attribution(),
+            new OpenLayers.Control.ScaleLine(),
+//            new OpenLayers.Control.LayerSwitcher()
+    ]});
+    {{ mapid }} = map;
+    map.numZoomLevels = null;
+
+    var osmLayer = new OpenLayers.Layer.OSM("OpenStreetMap", null, {
+        sphericalMercator: true,
+        numZoomLevels: 17,
+        wrapDateLine: false
+    });
+    map.addLayer(osmLayer);
+
+    styleMap = {
+        strokeColor: "blue", 
+        strokeOpacity: "0.7", 
+        strokeWidth: 3,
+    };
+    var vectorLayer = new OpenLayers.Layer.Vector('Vectorlayer', {
+        style: styleMap
+    });
+    vectorLayer.addFeatures([new OpenLayers.Feature.Vector(geometry)]);
+    map.addLayer(vectorLayer);
+
+    map.zoomToMaxExtent();
+    map.zoomToExtent(vectorLayer.getDataExtent(), true);
+    
+})();
+    
+
+</script>

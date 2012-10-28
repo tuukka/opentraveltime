@@ -1,0 +1,77 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal">
+<head>
+<title>Reittihaku</title>
+<link rel="stylesheet" href="static/ol/theme/default/style.css" type="text/css">
+<style type="text/css">
+a {
+    text-decoration: none;
+}
+table {
+    background-color: #eeeeee;
+    float: left;
+    margin: 2px;
+}
+.attribution {
+    opacity: 0.5;
+    font-size: smaller;
+}
+.smallmap {
+    width: 512px;
+    height: 256px;
+    border: 1px solid #000;
+}
+</style>
+<script type="text/javascript" src="static/ol/OpenLayers.js">
+</script>
+<script>
+function positionCallback(position) {
+    // update start location only if it's empty or (earlier) coordinates:
+    if(!document.routequery.from.value || document.routequery.from.value.match(/\d+(\.\d+)?,\d+(\.\d+)?/)) {
+        document.routequery.from.value = position.coords.longitude.toPrecision(7) + "," + position.coords.latitude.toPrecision(7);
+    }
+}
+
+function myonload() {
+    if (navigator.geolocation) {
+        // try to locate user if there's no start location yet:
+        if(!document.routequery.from.value) {
+            navigator.geolocation.watchPosition(positionCallback, null, {enableHighAccuracy: true});
+        }
+    }
+}
+</script>
+</head>
+<body onload="myonload()">
+{% ifequal api "Matka.fi" %}
+<p><a href=".">Helsingin seutu</a> | <strong>Suomi</strong></p>
+<h1>Suomen reittihaku</h1>
+{% else %}
+<p><strong>Helsingin seutu</strong> | <a href="finland">Suomi</a></p>
+<h1>Helsingin seudun reittihaku</h1>
+{% endifequal %}
+<form name="routequery" action="">
+Mistä: <input type=text name=from value="{{ field_from }}" />
+Mihin: <input type=text name=to value="{{ field_to }}" />
+<input type=submit value="Hae" />
+</form>
+
+{% if result %}
+
+{{ result|safe }}
+
+{% endif %}
+
+<br clear=all />
+<hr />
+{% ifequal api "Matka.fi" %}
+<a href="http://github.com/tuukka/opentraveltime">OpenTravelTime</a> &mdash; Suomen reittihaun tiedot haetaan <a href="http://developer.matka.fi/">Matka.fi APIsta</a>.
+{% else %}
+<a href="http://github.com/tuukka/opentraveltime">OpenTravelTime</a> &mdash; Helsingin seudun reittihaun tiedot haetaan <a href="http://developer.reittiopas.fi/">HSL Reittiopas APIsta</a> ja <a href="http://pk.hsl.fi/">Pyöräilyn ja kävelyn Reittioppaasta</a>.
+{% endifequal %}
+</body></html>

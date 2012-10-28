@@ -1,0 +1,14 @@
+#!/home/user/.virtualenvs/ott/bin/python
+import sys, os
+
+PROJECT_DIR = '~/opentraveltime'
+
+sys.path.insert(0, os.path.expanduser(PROJECT_DIR))
+os.chdir(os.path.expanduser(PROJECT_DIR))
+
+# Set the DJANGO_SETTINGS_MODULE environment variable.
+os.environ['DJANGO_SETTINGS_MODULE'] = "opentraveltime.settings"
+
+from django.core.servers.fastcgi import runfastcgi
+runfastcgi(method="threaded", daemonize="false")
+
